@@ -1,0 +1,6 @@
+assets/charsets/**
+*.prg
+*.sym
+*.vs
+*.dbg
+
