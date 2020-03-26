@@ -22,6 +22,8 @@ SidHandler: {
     beq IntroJmp
     cmp #GameStateInstructions
     beq InstructionsJmp
+    cmp #GameStateNewLevel
+    beq NewLevelJmp
     cmp #GameStatePlaying
     beq GameJmp
     cmp #GameStateDying
@@ -32,11 +34,13 @@ SidHandler: {
     // safety net should never be hit
     rts
 
-    // let us jump mor ethan 255 bytes
+    // let us jump more than 255 bytes
     IntroJmp:
         jmp Intro
     InstructionsJmp:
         jmp Instructions
+    NewLevelJmp:
+        jmp NewLevel
     GameJmp:
         jmp Game
     DyingJmp:

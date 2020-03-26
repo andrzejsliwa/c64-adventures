@@ -4,7 +4,7 @@
 
 HighScore: {
     //nastyBorder()
-    printCenter(@"<- ! ich vermisse dich ! ->", 10);
-    printCenter("high scores", 12);
+    printCenter(@"<- ! a c=64 adventure ! ->", 11);
+    printCenter("high scores", 13);
     rts
 }

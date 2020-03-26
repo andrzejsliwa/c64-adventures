@@ -1,5 +1,7 @@
 #importonce
 
+#import "labels.asm"
+
 .function neg(value) {
 	.return value ^ $FF
 }
@@ -52,4 +54,53 @@
         bne loop
         .var destinationEnd = destination + $0300 + 255;
         {}.print "copied 1k from origin : $" + toHexString(origin) + ", to dest : $" + toHexString(destination) + " - $" + toHexString(destinationEnd);
+}
+
+
+/*
+flips between exposing character rom and registers at $d000
+*/
+.macro toggleCharacterRomVisible(visible) {
+    .var mask = visible ? %11111011 : %11111111;
+    sei
+    enableRomPaging(true);
+    lda PROCESSOR_PORT
+    and #mask
+    sta PROCESSOR_PORT
+    enableRomPaging(false);
+    cli
+}
+/*
+pages basic and kernal roms in or out
+*/
+.macro configureRoms(basicEnabled, kernalEnabled) {
+    .var mask = %11111100;
+    .if (basicEnabled) {
+        .eval mask += 1
+    }
+    .if (kernalEnabled) {
+        .eval mask += 2
+    }
+    sei
+    enableRomPaging(true);
+    lda PROCESSOR_PORT
+    and #mask
+    sta PROCESSOR_PORT
+    enableRomPaging(false);
+    cli
+}
+/*
+set read / write permissions on the PROCESSOR_PORT register
+*/
+.macro enableRomPaging(bool) {
+    .var maskRead = %11111000
+    .var maskWrite = %00000111
+
+    lda PROCESSOR_PORT_ACCESS
+    .if (bool) {
+        ora #maskWrite
+    } else {
+        and #maskRead
+    }
+    sta PROCESSOR_PORT_ACCESS
 }

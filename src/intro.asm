@@ -10,7 +10,10 @@ Intro: {
 
     // border flashing
     inc VIC_BORDER_COLOUR
-    nastyBorder()
+    //nastyBorder(0, 0);
+    //ldx #00
+    //jsr AnimatedBorder
+    jsr FullscreenBorder
 
     lda STATE.entered
     cmp #$01
@@ -23,14 +26,12 @@ Intro: {
         sta STATE.entered
 
         setTextColour(LIGHT_GREEN)
-        printCenter(@"<- ! ich vermisse dich ! ->", 10);
-        printCenter("intro", 12);
-        printCenter("welcome to a game", 14);
+        printCenter(@"<- ! a c=64 adventure ! ->", 11);
+        printCenter("intro", 13);
+        printCenter("welcome to a game", 15);
 
     INTRO_INPUT:
 
-        //lda STATE.divider
-        //bne NOOP
         checkKey(KeySpace, true);
         beq NOOP
 
@@ -42,9 +43,11 @@ Intro: {
     NOOP:
         rts
 }
+
 Instructions: {
 
-    nastyBorder()
+    //nastyBorder(0, 0);
+    jsr FullscreenBorder
 
     lda STATE.entered
     cmp #$01
@@ -58,9 +61,9 @@ Instructions: {
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
-        printCenter(@"<- ! ich vermisse dich ! ->", 10)
-        printCenter("instructions", 12);
-        printCenter("! just play it !", 14);
+        printCenter(@"<- ! a c=64 adventure ! ->", 11)
+        printCenter("instructions", 13);
+        printCenter("! just play it !", 15);
 
     INSTRUCTION_INPUT:
 
@@ -69,27 +72,10 @@ Instructions: {
 
     KEY:
         // go back to intro screen
-        transitionState(GameStateIntro)
+        //transitionState(GameStateIntro)
+        transitionState(GameStateNewLevel);
         rts
 
     NOOP:
         rts
-}
-
-.macro nastyBorder() {
-    .for (var y = 0; y < 25; y++) {
-        .if (y == 0 || y == 24) {
-            // top or bottom row is full
-            .for (var x = 0; x < 40; x++) {
-                inc SCREEN_BASE + (y * 40) + x
-                inc $d800 + (y * 40) + x
-            }
-        } else {
-            // just left and right borders
-            inc SCREEN_BASE + (y * 40)
-            inc SCREEN_BASE + (y * 40) + 39
-            inc $d800 + (y * 40)
-            inc $d800 + (y * 40) + 39
-        }
-    }
 }

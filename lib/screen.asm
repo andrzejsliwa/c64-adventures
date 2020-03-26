@@ -9,7 +9,7 @@
     https://sta.c64.org/cbm64col.html
 */
 
-* = * "Screen Code"
+* = $2200 "Screen Code"
 
 SCREEN: {
 
@@ -25,6 +25,102 @@ SCREEN: {
         rts
     }
 
+}
+
+// size is in X
+AnimatedBorder: {
+
+    // calculate 1st row and last row and column
+    txa
+    sta start // first row && column
+    sta counter
+
+    // flip it negative
+    //eor #$7F
+    // add 25
+    //adc #25
+
+    lda #24
+    sta lastRow // last row
+    //adc #15
+    lda #40
+    sta lastColumn // last column
+
+    ldx #0//(lastRow * 40) + (start)
+
+LoopXHigh:
+    // paint full rows with an inc of what's there
+
+    inc SCREEN_BASE, x
+    inc $d800, x
+    inc counter
+    inx
+    // compare last column with counter
+    cmp counter
+    bne LoopXHigh
+
+
+    // set up for bottom row
+    lda start
+    sta counter
+    lda lastColumn
+    ldx #0
+
+LoopXLow:
+
+    inc $07c0, x
+    inc $d800 + 960, x
+    inc counter
+    inx
+    // compare last column with counter
+    cmp counter
+    bne LoopXLow
+
+    // walk in between rows paintig first and last column with an inc
+
+    rts
+
+    // local vars
+    start: .byte $ff
+    lastColumn: .byte $ff
+    lastRow: .byte $ff
+    counter: .byte $ff
+
+    .label screenFirst = $0400
+    .label colourFirst = $d800
+    .label screenLast =  1984//$07c0   // $0400 + (40 * 24)
+    colourLast: .word $d800 + (40 * 24)
+
+}
+
+/* utility unerapping the macro because it's re used ll ove rhe place in this format
+*/
+FullscreenBorder:
+    nastyBorder(0, 0);
+    rts
+
+.macro nastyBorder(startX, startY) {
+
+    .var endX = 40 - startX
+    .var sizeX = 40 - startX
+    .var endY = 25 - startY
+    .var sizeY = endY - startY
+
+    .for (var y = startY; y < endY; y++) {
+        .if (y == startY || y == endY - 1) {
+            // top or bottom row is full
+            .for (var x = startX; x < sizeX; x++) {
+                inc SCREEN_BASE + (y * 40) + x
+                inc $d800 + (y * 40) + x
+            }
+        } else {
+            // just left and right borders
+            inc SCREEN_BASE + (y * 40) + startY
+            inc SCREEN_BASE + (y * 40) + 39 - startY
+            inc $d800 + (y * 40) + startY
+            inc $d800 + (y * 40) + 39 - startY
+        }
+    }
 }
 
 .macro printCenter(text, y) {

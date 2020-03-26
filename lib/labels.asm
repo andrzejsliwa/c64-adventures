@@ -3,6 +3,14 @@
 * = * "Labels"
 
 /*
+Processor port data direction register. Bits:
+Default: $2F, %00101111.
+
+Bit #x: 0 = Bit #x in processor port can only be read; 1 = Bit #x in processor port can be read and written.
+*/
+.label PROCESSOR_PORT_ACCESS = $00
+
+/*
 Processor port. $01, Bits:
 Default: $37, %00110111.
 

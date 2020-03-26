@@ -18,26 +18,26 @@
         jmp IRQSetup
 
     IRQHandler:
-/*
+
+        /*
         #if !HAS_KERNAL_ROM
             StoreRegisterState();
         #endif
-*/
+        */
+
         lda #$ff
         AcknowledgeInterrupt();
 
         // this is the actual work
         jsr handlerFunction
 
-        jmp $ea81
-        /*
         #if HAS_KERNAL_ROM
             jmp $ea81
         #else
             RestoreRegsiterState();
             rti
         #endif
-        */
+        
     IRQSetup:
 
         /*
