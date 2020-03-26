@@ -10,7 +10,7 @@ NewLevel: {
 
     // check this is first time here
     lda STATE.entered
-    cmp #$01
+    cmp #StateEntered
     beq LEVEL_SETUP
 
     // do nothing for 30 frames
@@ -35,9 +35,7 @@ NewLevel: {
 
     LEVEL_SETUP:
         // reset state
-        lda #$00
-        sta STATE.temp1
-        sta STATE.entered
+        stateTransitioned();
         // increment our level counter
         inc STATE.level
         jmp LEVEL_DRAW

@@ -10,20 +10,20 @@ Intro: {
 
     // border flashing
     inc VIC_BORDER_COLOUR
-    //nastyBorder(0, 0);
+
     //ldx #00
     //jsr AnimatedBorder
     jsr FullscreenBorder
 
     lda STATE.entered
-    cmp #$01
+    cmp #StateEntered
     beq INTRO_DRAW
     jmp INTRO_INPUT
 
     INTRO_DRAW:
 
-        lda #$00
-        sta STATE.entered
+        // reset state
+        stateTransitioned();
 
         setTextColour(LIGHT_GREEN)
         printCenter(@"<- ! a c=64 adventure ! ->", 11);
@@ -46,18 +46,17 @@ Intro: {
 
 Instructions: {
 
-    //nastyBorder(0, 0);
     jsr FullscreenBorder
 
     lda STATE.entered
-    cmp #$01
+    cmp #StateEntered
     beq INSTRUCTION_DRAW
     jmp INSTRUCTION_INPUT
 
     INSTRUCTION_DRAW:
 
-        lda #$00
-        sta STATE.entered
+        // reset state
+        stateTransitioned();
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
