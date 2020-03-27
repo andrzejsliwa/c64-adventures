@@ -72,7 +72,7 @@ Instructions: {
     KEY:
         // go back to intro screen
         //transitionState(GameStateIntro)
-        transitionState(GameStateNewLevel);
+        transitionState(GameStateNewGame);
         rts
 
     NOOP:

@@ -22,12 +22,14 @@ SidHandler: {
     beq IntroJmp
     cmp #GameStateInstructions
     beq InstructionsJmp
+    cmp #GameStateNewGame
+    beq NewGameJmp
     cmp #GameStateNewLevel
     beq NewLevelJmp
     cmp #GameStatePlaying
-    beq GameJmp
+    beq GamePlayingJmp
     cmp #GameStateDying
-    beq DyingJmp
+    beq GameDyingJmp
     cmp #GameStateHighScore
     beq HighScoreJmp
 
@@ -39,11 +41,13 @@ SidHandler: {
         jmp Intro
     InstructionsJmp:
         jmp Instructions
+    NewGameJmp:
+        jmp GameInit
     NewLevelJmp:
         jmp NewLevel
-    GameJmp:
+    GamePlayingJmp:
         jmp Game
-    DyingJmp:
+    GameDyingJmp:
         jmp Dying
     HighScoreJmp:
         jmp HighScore

@@ -9,10 +9,11 @@
 .enum {
     GameStateIntro = 0, 
     GameStateInstructions = 1,
-    GameStateNewLevel = 2,
-    GameStatePlaying = 3,
-    GameStateDying = 4,
-    GameStateHighScore = 5
+    GameStateNewGame = 2, 
+    GameStateNewLevel = 3,
+    GameStatePlaying = 4,
+    GameStateDying = 5,
+    GameStateHighScore = 6
 }
 
 .zp {
@@ -31,12 +32,8 @@
         entered: .byte $00;
         // temp1 stasher
         temp1: .byte $00;
-        // temp2 stasher
-        temp2: .byte $00;
-        // temp3 stasher
-        temp3: .byte $00;
-        // temp4 stasher
-        temp4: .byte $00;
+        // word holder. 
+        vector1: .word $0000;
     }
 }
 
@@ -54,7 +51,6 @@
     lda #$00
     sta STATE.divider
     sta STATE.temp1
-    sta STATE.temp2
     // store the desired state
     lda #newState
     sta STATE.gameState

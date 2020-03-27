@@ -4,9 +4,21 @@
 #import "../lib/input.asm"
 #import "state.asm"
 
+/* sets us up for a new game */
+GameInit: {
+    stateTransitioned();
+    lda #00
+    sta STATE.level
+    sta STATE.score
+    lda #03
+    sta STATE.lives
+    transitionState(GameStateNewLevel);
+}
+
+/* sets us up for a new level */
 NewLevel: {
 
-    nastyBorder(STATE.temp1, STATE.temp1);
+    nastyBorder($09, $09);
 
     // check this is first time here
     lda STATE.entered
@@ -50,7 +62,10 @@ NewLevel: {
         jsr SCREEN.Clear
         setTextColour(WHITE);
         printCenter(@"gET rEADY pLAYER 1", 11);
-        printCenter("lEVEL " + toIntString(STATE.level), 13);
+        .var level = -1
+        lda STATE.level
+        sta level
+        printCenter("lEVEL " + toIntString(level), 13);
         //nastyBorder(STATE.temp1, STATE.temp1);
         rts
 
