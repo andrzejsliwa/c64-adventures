@@ -2,12 +2,9 @@
 
 #import "labels.asm"
 
-.function neg(value) {
+.function negate(value) {
 	.return value ^ $FF
 }
-.assert "neg($00) gives $FF", neg($00), $FF
-.assert "neg($FF) gives $00", neg($FF), $00
-.assert "neg(%10101010) gives %01010101", neg(%10101010), %01010101
 
 .macro fill1kbAddressMulti(listKVP) {
     // set up the counter
@@ -103,4 +100,58 @@ set read / write permissions on the PROCESSOR_PORT register
         and #maskRead
     }
     sta PROCESSOR_PORT_ACCESS
+}
+
+
+/*
+increments a word sized memory address
+*/
+.macro incWord(address) {
+    // inc the lsb
+    inc address
+    // if we've wrapped to zero then inc the msb
+    bne !+
+    inc address + 1
+    !:
+}
+
+/*
+deccrements a word sized memory address
+*/
+.macro decWord(address) {
+    {}.print "decrementing : $" + toHexString(address);
+    // dec the lsb, which only sets the zero and neg flags
+    dec address
+    // so we have to manually compare it to a roll around max value
+    lda address
+    cmp #$ff
+    bne !+
+    dec address + 1
+    !:
+}
+
+/*
+adds word 'val' to memory pair specified by to address
+*/
+.macro addWord(val, to) {
+    clc
+    lda to
+    adc #<val
+    sta to
+    lda to + 1
+    adc #>val
+    sta to + 1
+}
+
+/*
+subtracts a word 'val' from address pair specified by from address
+*/
+.macro subWord(val, from) {
+    sec
+    lda from
+    sbc #<val
+    sta from
+    lda from + 1
+    sbc #>val
+    sta from + 1
 }

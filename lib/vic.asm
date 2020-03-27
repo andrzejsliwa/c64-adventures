@@ -220,7 +220,7 @@ initialiseVicCharacterMode(VIC_BANK_0, VIC_SCREEN_OFFSET_1, VIC_CHARSET_OFFSET_2
         */
 
     .function getBankMask(enum) {
-        .return neg((enum / $4000) + %11111100);
+        .return negate((enum / $4000) + %11111100);
     }
     //.assert "VIC_BANK_2 = %xxxxxxx1 ($01)", getBankMask(VIC_BANK_2), $01;
     //.assert "VIC_BANK_3 = %xxxxxxx1 ($00)", getBankMask(VIC_BANK_3), $00;
