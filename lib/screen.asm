@@ -27,6 +27,110 @@ SCREEN: {
     }
 }
 
+.macro centreText(text, row) {
+
+    jmp start
+
+    .if (mod(text.size(), 2) == 1) {
+        .eval text += " ";
+    }
+
+    !: {
+        .text text
+        .byte 0
+    }
+
+    start:
+        lda #<!-
+        sta $fb
+        lda #>!-
+        sta $fc
+
+        ldx #row
+        jsr TextCenter
+
+}
+
+// row is in x, text pointer is in zp $fb++
+TextCenter: {
+
+    // get the length of the string
+    ldy #0
+    !:
+        lda (ptr), y
+        beq Done
+        iny
+        jmp !-
+    Done:
+    // divide it by 2
+    tya
+    lsr
+    sta columnOffset
+    // and take it from mid screen point
+    lda #20
+    sbc columnOffset
+    sta columnOffset
+
+    // set up our initial screen memory base
+    resetWord(screenRowBase);
+    addWord(SCREEN_BASE, screenRowBase);
+
+    resetWord(colourRowBase);
+    addWord(CHARSET_COLOUR, colourRowBase);
+
+    /* 
+        first we multiply x by 2 to get the correct table index
+
+        then calulate the row memory offset, based on [rowCounter * 40]
+        get the address from our table based on start
+        store it in the offset mem address.
+        row counter is in x at this point
+    */
+    txa
+    asl
+    tax
+
+    lda table40, x
+    adc columnOffset
+    sta rowOffset
+    inx
+    lda table40, x
+    sta rowOffset + 1
+    addWordFromAddress(rowOffset, screenRowBase);
+    addWordFromAddress(rowOffset, colourRowBase);
+    // initial screen memory base is set
+
+    ldy #0
+    ldx VIC_TEXT_COLOUR
+    LOOP:
+        smcWord(screenRowBase, smc1);
+        // load next char, based on y offset
+        lda (ptr), y
+        // null terminate means end
+        beq End
+        // draw the next character
+    smc1:
+        sta $dead, y
+        // set the colour
+        smcWord(colourRowBase, smc2);
+        txa
+    smc2:
+        sta $beef, y
+        // increment the counter
+        iny
+        jmp LOOP
+
+    End:
+        rts
+
+    // local vars
+    .label ptr = $fb
+    columnOffset: .byte $ff
+    rowOffset: .word $ffff
+    screenRowBase: .word $ffff
+    colourRowBase: .word $ffff
+}
+
 // size is in X
 AnimatedBorder: {
 
@@ -184,7 +288,7 @@ FullscreenBorder:
         }
     }
 }
-
+/*
 .macro printCenter(text, y) {
 
     // start position
@@ -218,6 +322,7 @@ FullscreenBorder:
     End:
 
 }
+*/
 .macro printAbs(text, x, y) {
 
     // start position
@@ -255,6 +360,9 @@ FullscreenBorder:
 .macro setTextColour(colour) {
     ldx #colour;
     stx VIC_TEXT_COLOUR;
+}
+.macro incrementTextColour() {
+    inc VIC_TEXT_COLOUR
 }
 
 #if HAS_KERNAL_ROM

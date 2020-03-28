@@ -4,7 +4,8 @@
 
 /*
 self modifying code for a word value
-takes the label Val and applies it to the desination label next command
+takes the label Val and applies it to the desination label next command.
+Accumulator
 */
 .macro smcWord(labelVal, destinationLabel) {
     lda labelVal
@@ -163,8 +164,11 @@ Accumulator
     sta address
     sta address + 1
 }
+/*
+adds word stored in address to memory pair specified by the to address
+Accumulator 
+*/
 .macro addWordFromAddress(address, to) {
-    .break
     clc
     lda to
     adc address
