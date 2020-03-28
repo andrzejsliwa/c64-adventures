@@ -26,14 +26,14 @@ NewLevel: {
     cmp #StateEntered
     beq LEVEL_SETUP
 
-    // do nothing for 16 frames
+    // do nothing for 10 frames
     inc STATE.divider
     lda STATE.divider
-    cmp #$0f
+    cmp #$0a
     beq FRAME
     rts
 
-    // every 16 frames we hit here
+    // every 10 frames we hit here
     FRAME:
         // reset divider
         lda #$00
@@ -42,7 +42,7 @@ NewLevel: {
         inc STATE.temp1
         // check if we're finished animating
         lda STATE.temp1
-        cmp #$0a
+        cmp #$0c
         beq START_GAME
         jmp LEVEL_DRAW
 
