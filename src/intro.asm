@@ -11,9 +11,8 @@ Intro: {
     // border flashing
     inc VIC_BORDER_COLOUR
 
-    //ldx #00
-    //jsr AnimatedBorder
-    jsr FullscreenBorder
+    ldx #00
+    jsr AnimatedBorder
 
     lda STATE.entered
     cmp #StateEntered
@@ -38,7 +37,6 @@ Intro: {
     KEY:
         // goto instructions screen
         transitionState(GameStateInstructions)
-        rts
 
     NOOP:
         rts
@@ -46,7 +44,8 @@ Intro: {
 
 Instructions: {
 
-    jsr FullscreenBorder
+    ldx #00
+    jsr AnimatedBorder
 
     lda STATE.entered
     cmp #StateEntered
@@ -73,7 +72,6 @@ Instructions: {
         // go back to intro screen
         //transitionState(GameStateIntro)
         transitionState(GameStateNewGame);
-        rts
 
     NOOP:
         rts

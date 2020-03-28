@@ -18,21 +18,22 @@ GameInit: {
 /* sets us up for a new level */
 NewLevel: {
 
-    nastyBorder($09, $09);
+    ldx STATE.temp1
+    jsr AnimatedBorder
 
     // check this is first time here
     lda STATE.entered
     cmp #StateEntered
     beq LEVEL_SETUP
 
-    // do nothing for 30 frames
+    // do nothing for 16 frames
     inc STATE.divider
     lda STATE.divider
-    cmp #$1d
+    cmp #$0f
     beq FRAME
     rts
 
-    // every 30 frames we hit here
+    // every 16 frames we hit here
     FRAME:
         // reset divider
         lda #$00
@@ -55,20 +56,24 @@ NewLevel: {
     START_GAME:
 
         transitionState(GameStatePlaying);
+        //transitionState(GameStateIntro);
         rts
 
     LEVEL_DRAW:
 
         jsr SCREEN.Clear
+
         setTextColour(WHITE);
         printCenter(@"gET rEADY pLAYER 1", 11);
         .var level = -1
         lda STATE.level
         sta level
         printCenter("lEVEL " + toIntString(level), 13);
-        //nastyBorder(STATE.temp1, STATE.temp1);
+        
+        // shrink the border
+        ldx STATE.temp1
+        jsr AnimatedBorder
         rts
-
 }
 
 Game: {
@@ -82,10 +87,32 @@ Game: {
 
     inc VIC_BORDER_COLOUR
 
-    printCenter(@"<- ! a c=64 adventure ! ->", 11);
-    printCenter("playing game", 13);
+    lda STATE.entered
+    cmp #StateEntered
+    beq INSTRUCTION_DRAW
+    jmp INSTRUCTION_INPUT
 
-    rts
+    INSTRUCTION_DRAW:
+
+        // reset state
+        stateTransitioned();
+
+        setBorderColour(BLACK);
+        setTextColour(WHITE);
+        printCenter(@"<- ! a c=64 adventure ! ->", 11);
+        printCenter("playing game", 13);
+
+    INSTRUCTION_INPUT:
+
+        checkKey(KeySpace, true);
+        beq NOOP
+
+    KEY:
+        // go back to intro screen
+        transitionState(GameStateIntro);
+
+    NOOP:
+        rts
 }
 
 Dying: {

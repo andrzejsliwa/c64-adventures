@@ -11,94 +11,156 @@
 
 * = $2200 "Screen Code"
 
-SCREEN: {
+// lookup for calculating screen row offset
+table40:.fillword 24, i * 40
 
+SCREEN: {
     BackgroundColour: 
         .byte BLACK
     BorderColour: 
         .byte LIGHT_BLUE
 
     Clear: {
-
         // clear the screen
         fill1kbAddress(SCREEN_BASE, $20);
         rts
     }
-
 }
 
 // size is in X
 AnimatedBorder: {
 
-    // calculate 1st row and last row and column
+    // store the x register
+    stx startPosition
+    stx rowCounter
+
+    // set up our initial screen memory base
+    resetWord(screenRowBase);
+    addWord(SCREEN_BASE, screenRowBase);
+    resetWord(colourRowBase);
+    addWord(CHARSET_COLOUR, colourRowBase);
+
+    /* 
+        first we multiply x by 2 to get the correct table index
+        
+        then calulate the row memory offset, based on [rowCounter * 40]
+        get the address from our table based on start
+        store it in the offset mem address.
+        row counter is in x at this point
+    */
     txa
-    sta start // first row && column
-    sta counter
+    asl
+    tax
 
-    // flip it negative
-    //eor #$7F
-    // add 25
-    //adc #25
-
-    lda #24
-    sta lastRow // last row
-    //adc #15
-    lda #40
-    sta lastColumn // last column
-
-    ldx #0//(lastRow * 40) + (start)
-
-LoopXHigh:
-    // paint full rows with an inc of what's there
-
-    inc SCREEN_BASE, x
-    inc $d800, x
-    inc counter
+    lda table40, x
+    sta offset
     inx
-    // compare last column with counter
-    cmp counter
-    bne LoopXHigh
 
+    lda table40, x
+    sta offset + 1
+    addWordFromAddress(offset, screenRowBase);
+    addWordFromAddress(offset, colourRowBase);
+    // initial screen memory and colour bases are set
+ 
+    // calc last row and last column
+    lda #25
+    sbc startPosition
+    sta lastRow
 
-    // set up for bottom row
-    lda start
-    sta counter
-    lda lastColumn
-    ldx #0
+    lda #39
+    sbc startPosition
+    sta lastColumn
 
-LoopXLow:
+    // set up the initial row
+    ldy rowCounter
 
-    inc $07c0, x
-    inc $d800 + 960, x
-    inc counter
-    inx
-    // compare last column with counter
-    cmp counter
-    bne LoopXLow
+    NewRow:
 
-    // walk in between rows paintig first and last column with an inc
+        // reset counters for a new row
+        ldx startPosition
+        stx columnCounter
 
-    rts
+        // check which row we'e on
+        cpy startPosition
+        beq FullRow
+        cpy lastRow
+        bne PartialRow
+        jmp FullRow
+
+    PartialRow:
+            // paint the first char by incrementing the address
+            smcWord(screenRowBase, smc1);
+            smcWord(colourRowBase, smc2);
+        smc1:
+            inc $dead, x
+        smc2:
+            inc $beef, x
+
+            smcWord(screenRowBase, smc3);
+            smcWord(colourRowBase, smc4);
+            ldx lastColumn
+        smc3:
+            inc $dead, x
+        smc4:
+            inc $beef, x
+            jmp EndOfRow
+
+    FullRow:
+            // self modifying code
+            smcWord(screenRowBase, smc5);
+            smcWord(colourRowBase, smc6);
+
+    FullRowLoop:
+        smc5:
+            inc $dead, x
+        smc6:
+            inc $beef, x
+
+        cpx lastColumn
+        beq EndOfRow
+        inx
+        jmp FullRowLoop
+
+    EndOfRow:
+        // calculate the next screen row base (SCREEN_BASE + offset)
+        addWord(40, screenRowBase);
+        addWord(40, colourRowBase);
+
+        // compare rowCounter w/ lastRow
+        cpy lastRow
+        beq Done
+        inc rowCounter
+        ldy rowCounter
+        jmp NewRow
+
+    Done:
+
+        rts
 
     // local vars
-    start: .byte $ff
-    lastColumn: .byte $ff
+    rowCounter: .byte $ff
+    columnCounter: .byte $ff
+
+    startPosition: .byte $ff
     lastRow: .byte $ff
-    counter: .byte $ff
+    lastColumn: .byte $ff
 
-    .label screenFirst = $0400
-    .label colourFirst = $d800
-    .label screenLast =  1984//$07c0   // $0400 + (40 * 24)
-    colourLast: .word $d800 + (40 * 24)
-
+    offset: .word $ffff
+    screenRowBase: .word $ffff
+    colourRowBase: .word $ffff
 }
 
-/* utility unerapping the macro because it's re used ll ove rhe place in this format
+/* 
+    utility unwrapping the macro because it's re-used all over the place in this fullscreen format
 */
+/*
 FullscreenBorder:
     nastyBorder(0, 0);
     rts
-
+*/
+/*
+    simple border scroll, with offset
+*/
 .macro nastyBorder(startX, startY) {
 
     .var endX = 40 - startX
