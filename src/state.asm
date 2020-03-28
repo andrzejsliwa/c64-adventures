@@ -30,10 +30,19 @@
         divider: .byte $00;
         // entered new section
         entered: .byte $00;
+
+        // temp word holder #1
+        vector1: .word $0000;
+        // temp word holder #2
+        vector2: .word $0000;
         // temp1 stasher
         temp1: .byte $00;
-        // word holder. 
-        vector1: .word $0000;
+        // temp2 stasher
+        temp2: .byte $00;
+        // temp3 stasher
+        temp3: .byte $00;
+        // temp4 stasher
+        temp4: .byte $00;
     }
 }
 
@@ -51,6 +60,8 @@
     lda #$00
     sta STATE.divider
     sta STATE.temp1
+    tax
+
     // store the desired state
     lda #newState
     sta STATE.gameState
