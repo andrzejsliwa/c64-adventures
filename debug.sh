@@ -1,3 +1,4 @@
 #!/bin/bash
 
-c64debugger -symbols ./start.sym -breakpoints ./main.dbg  -prg ./main.prg
+dir=`pwd`
+./make.sh && c64debugger -symbols "${dir}/start.sym" -breakpoints "${dir}/main.dbg" -prg "${dir}/main.prg" -alwaysjmp

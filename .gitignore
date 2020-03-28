@@ -3,4 +3,4 @@ assets/charsets/**
 *.sym
 *.vs
 *.dbg
-
+*.byte
