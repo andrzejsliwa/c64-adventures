@@ -200,3 +200,45 @@ Accumulator
     sbc #>val
     sta from + 1
 }
+
+
+/*
+    key Repeat macro.
+    defaults are 00 , 04, 0a
+    allowed ranges are $0-3, $0-4, $0-0f
+*/
+.enum {
+    // default is cursor keys, delete, space bar etc
+    KeyRepeatModeDefault = %00, 
+    KeyRepeatModeOff = %01, 
+    KeyRepeatModeAll = %11
+}
+.macro keyRepeat(mode, speed, initialDelay) {
+
+    .if (speed < 0) {
+        .eval speed = 0;
+    } else .if (speed > 4) {
+        .eval speed = 4;
+    }
+
+    .var finalMode = mode << 6
+    lda #finalMode
+    sta 650
+
+    .if (speed < 0) {
+        .eval speed = 0;
+    } else .if (speed > 4) {
+        .eval speed = 4;
+    }
+    lda #speed
+    sta 651
+
+    .if (initialDelay < 0) {
+        .eval initialDelay = 0;
+    } else .if (initialDelay > 16) {
+        .eval initialDelay = 16;
+    }
+    lda #initialDelay
+    sta 652
+
+}
