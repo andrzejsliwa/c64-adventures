@@ -2,6 +2,7 @@
 
 * = * "Labels"
 
+
 /*
 Processor port data direction register. Bits:
 Default: $2F, %00101111.
@@ -38,6 +39,7 @@ Bit #5: Datasette motor control; 0 = On; 1 = Off.
 
 // charset colour
 .label CHARSET_COLOUR = $d800
+
 // border register
 .label VIC_BORDER_COLOUR = $d020
 // background register
@@ -172,7 +174,6 @@ Port A data direction register.
 Bit #x: 0 = Bit #x in port A can only be read; 1 = Bit #x in port A can be read and written.
 */
 .label VIC_PORT_A_DATA_DIRECTION = $dd02
-
 
 .label CIA_PRA = $dc00
 

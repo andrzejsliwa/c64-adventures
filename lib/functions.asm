@@ -2,6 +2,20 @@
 
 #import "labels.asm"
 
+/*
+self modifying code for a word value
+takes the label Val and applies it to the desination label next command
+*/
+.macro smcWord(labelVal, destinationLabel) {
+    lda labelVal
+    sta destinationLabel + 1
+    lda labelVal + 1
+    sta destinationLabel + 2 
+}
+
+/*
+negates a number
+*/
 .function negate(value) {
 	.return value ^ $FF
 }
@@ -116,7 +130,17 @@ increments a word sized memory address
 }
 
 /*
-deccrements a word sized memory address
+inc a word address by x reg
+*/
+.macro incWordX(address) {
+    inc address, x
+    bne !+
+    inc address + 1
+    !:
+}
+
+/*
+decrements a word sized memory address
 */
 .macro decWord(address) {
     {}.print "decrementing : $" + toHexString(address);
@@ -130,8 +154,28 @@ deccrements a word sized memory address
     !:
 }
 
+/* 
+zeroes out a word sized address. 
+Accumulator 
+*/
+.macro resetWord(address) {
+    lda  #00
+    sta address
+    sta address + 1
+}
+.macro addWordFromAddress(address, to) {
+    .break
+    clc
+    lda to
+    adc address
+    sta to
+    lda to + 1
+    adc address + 1
+    sta to + 1
+}
 /*
-adds word 'val' to memory pair specified by to address
+adds word 'val' to memory pair specified by the to address
+Accumulator 
 */
 .macro addWord(val, to) {
     clc
@@ -145,6 +189,7 @@ adds word 'val' to memory pair specified by to address
 
 /*
 subtracts a word 'val' from address pair specified by from address
+Accumulator 
 */
 .macro subWord(val, from) {
     sec
