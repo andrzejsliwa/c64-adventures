@@ -42,9 +42,14 @@ NewLevel: {
         inc STATE.temp1
         // check if we're finished animating
         lda STATE.temp1
-        cmp #$0c
+        cmp #$0d
         beq START_GAME
-        jmp LEVEL_DRAW
+        cmp #$0b
+        bmi LEVEL_DRAW
+        jsr SCREEN.Clear
+        incrementTextColour();
+        centreText(" ...............", 12);
+        rts
 
     LEVEL_SETUP:
         // reset state
@@ -62,14 +67,15 @@ NewLevel: {
     LEVEL_DRAW:
 
         jsr SCREEN.Clear
+        incrementTextColour();
 
-        setTextColour(WHITE);
-        printCenter(@"gET rEADY pLAYER 1", 11);
-        .var level = -1
+        centreText(@"gET rEADY pLAYER 1", 11);
+        .var level = 1
         lda STATE.level
         sta level
-        printCenter("lEVEL " + toIntString(level), 13);
-        
+        incrementTextColour();
+        centreText("lEVEL 0" + toIntString(level), 13);
+
         // shrink the border
         ldx STATE.temp1
         jsr AnimatedBorder
@@ -81,11 +87,16 @@ Game: {
     .if (currentSidIndex != 1) {
         .eval currentSidIndex = 1
         .eval currentSid = sids.get(currentSidIndex)
+        ldx #0
+        ldy #0
+        lda #currentSid.startSong - 1
         jsr currentSid.init
     }
 */
 
-    inc VIC_BORDER_COLOUR
+    ldx #0
+    jsr AnimatedBorder
+    //inc VIC_BORDER_COLOUR
 
     lda STATE.entered
     cmp #StateEntered
@@ -99,8 +110,8 @@ Game: {
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
-        printCenter(@"<- ! a c=64 adventure ! ->", 11);
-        printCenter("playing game", 13);
+        centreText(@"<- ! a c=64 adventure ! ->", 11);
+        centreText("playing game", 13);
 
     INSTRUCTION_INPUT:
 
@@ -116,7 +127,7 @@ Game: {
 }
 
 Dying: {
-    printCenter(@"<- ! a c=64 adventure ! ->", 11);
-    printCenter("dying", 13);
+    centreText(@"<- ! a c=64 adventure ! ->", 11);
+    centreText("dying", 13);
     rts
 }

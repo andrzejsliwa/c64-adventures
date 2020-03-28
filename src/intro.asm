@@ -6,6 +6,11 @@
 #import "state.asm"
 #import "config.asm"
 
+mytext: 
+    .text "zERO pAGE pOWER ! "
+    .byte 'h', 'e', 'l', 'l', 'o', ' ', 'z', 'p', 0
+
+
 Intro: {
 
     // border flashing
@@ -25,9 +30,10 @@ Intro: {
         stateTransitioned();
 
         setTextColour(LIGHT_GREEN)
-        printCenter(@"<- ! a c=64 adventure ! ->", 11);
-        printCenter("intro", 13);
-        printCenter("welcome to a game", 15);
+        centreText("zERO pAGE pOWER", 9);
+        centreText(@"<- ! a c=64 adventure ! ->", 11);
+        centreText("intro", 13);
+        centreText("welcome to a game", 15);
 
     INTRO_INPUT:
 
@@ -59,9 +65,9 @@ Instructions: {
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
-        printCenter(@"<- ! a c=64 adventure ! ->", 11)
-        printCenter("instructions", 13);
-        printCenter("! just play it !", 15);
+        centreText(@"<- ! a c=64 adventure ! ->", 11)
+        centreText("instructions", 13);
+        centreText("! just play it !", 15);
 
     INSTRUCTION_INPUT:
 
@@ -76,3 +82,4 @@ Instructions: {
     NOOP:
         rts
 }
+
