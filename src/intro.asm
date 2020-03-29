@@ -43,8 +43,8 @@ Intro: {
 
     KEY:
         // goto instructions screen
-        //transitionState(GameStateInstructions);
-        transitionState(GameStateHighScore)
+        transitionState(GameStateInstructions);
+        //transitionState(GameStateHighScore)
 
     NOOP:
         rts
@@ -77,8 +77,6 @@ Instructions: {
         beq NOOP
 
     KEY:
-        // go back to intro screen
-        //transitionState(GameStateIntro)
         transitionState(GameStateNewGame);
 
     NOOP:

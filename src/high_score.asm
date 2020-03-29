@@ -16,12 +16,24 @@ HighScore: {
     cmp #StateEntered
     beq SETUP
 
-    // do nothing for 10 frames
-    inc STATE.divider
-    lda STATE.divider
-    cmp #$0a
-    beq DRAW
-    rts
+    INSTRUCTION_INPUT:
+
+        checkKey(KeySpace, true);
+        beq NOOP
+
+    TRANSITION:
+        // go back to intro screen
+        transitionState(GameStateIntro);
+        rts
+
+    NOOP:
+
+        // do nothing for 10 frames
+        inc STATE.divider
+        lda STATE.divider
+        cmp #$0a
+        beq DRAW
+        rts
 
     SETUP:
 
@@ -47,18 +59,6 @@ HighScore: {
             centreText("player "  + toIntString([x + 1], 2) + " ..... " + textScore, [11 + x]);
         }
 
-rts
-
-    INSTRUCTION_INPUT:
-
-        checkKey(KeySpace, true);
-        beq NOOP
-
-    TRANSITION:
-        // go back to intro screen
-        transitionState(GameStateIntro);
-
-    NOOP:
         rts
 
 }

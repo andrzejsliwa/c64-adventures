@@ -44,11 +44,11 @@ NewLevel: {
         lda STATE.temp1
         cmp #$0d
         beq TRANSITION
-        cmp #$0b
+        cmp #$0a
         bmi LEVEL_DRAW
         jsr SCREEN.Clear
         incrementTextColour();
-        centreText(" ...............", 12);
+        centreText("::::::::::::::::", 12);
         rts
 
     LEVEL_SETUP:
@@ -80,7 +80,9 @@ NewLevel: {
         rts
 }
 
+/* the main game logic will go here */
 Game: {
+
 /*
     .if (currentSidIndex != 1) {
         .eval currentSidIndex = 1
@@ -98,10 +100,10 @@ Game: {
 
     lda STATE.entered
     cmp #StateEntered
-    beq INSTRUCTION_DRAW
-    jmp INSTRUCTION_INPUT
+    beq DRAW
+    jmp INPUT
 
-    INSTRUCTION_DRAW:
+    DRAW:
 
         // reset state
         stateTransitioned();
@@ -110,9 +112,13 @@ Game: {
         setTextColour(WHITE);
         centreText(@"<- ! a c=64 adventure ! ->", 11);
         centreText("playing game", 13);
-        centreText("lives remaining : 0x", 15);
+        //centreText("lives remaining : 0x", 15);
 
-    INSTRUCTION_INPUT:
+        appendIntegerToText("lives remaining : ", STATE.lives);
+        ldx #15
+        jsr TextCenter
+
+    INPUT:
 
         checkKey(KeySpace, true);
         beq NOOP
@@ -122,43 +128,75 @@ Game: {
 
     NOOP:
         rts
+
 }
 
 Dying: {
 
+    ldx STATE.temp1
+    jsr AnimatedBorder
+
+    // check this is first time here
     lda STATE.entered
     cmp #StateEntered
-    beq INSTRUCTION_DRAW
-    jmp INSTRUCTION_INPUT
+    beq LEVEL_SETUP
 
-    INSTRUCTION_DRAW:
+    // do nothing for 10 frames
+    inc STATE.divider
+    lda STATE.divider
+    cmp #$0a
+    beq FRAME
+    rts
 
+    // every 10 frames we hit here
+    FRAME:
+        // reset divider
+        lda #$00
+        sta STATE.divider
+        // increment offset
+        inc STATE.temp1
+        // check if we're finished animating
+        lda STATE.temp1
+        cmp #$0d
+        beq KEY
+        cmp #$09
+        bmi LEVEL_DRAW
+        jsr SCREEN.Clear
+        incrementTextColour();
+        centreText("::::::::::::::::", 12);
+        rts
+
+    LEVEL_SETUP:
         // reset state
         stateTransitioned();
-        jsr SCREEN.Clear
-        ldx #0
-        jsr AnimatedBorder
-        setBorderColour(BLACK);
-        setTextColour(WHITE);
-        centreText(@"<- ! a c=64 adventure ! ->", 11);
-        centreText("damn, we're dying :(", 13);
-        centreText("lives remaining : 0x", 15);
-
-    INSTRUCTION_INPUT:
-
-        checkKey(KeySpace, true);
-        beq NOOP
+        // increment our level counter
+        inc STATE.level
+        jmp LEVEL_DRAW
 
     KEY:
     
         dec STATE.lives
         beq GameOver
         transitionState(GameStateNewLevel);
-        jmp NOOP
+        rts
 
     GameOver:
         transitionState(GameStateGameOver);
-    NOOP:
+        rts
+
+    LEVEL_DRAW:
+
+        jsr SCREEN.Clear
+        incrementTextColour();
+        centreText("damn, we're dying :(", 11);
+        //centreText("lives remaining : x", 13);
+        appendIntegerToText("lives remaining : ", STATE.lives);
+        ldx #13
+        jsr TextCenter
+
+        // shrink the border
+        ldx STATE.temp1
+        jsr AnimatedBorder
         rts
 }
 
@@ -190,7 +228,7 @@ GameOver: {
         lda STATE.temp1
         cmp #$0d
         beq TRANSITION
-        cmp #$0b
+        cmp #$0a
         bmi LEVEL_DRAW
         jsr SCREEN.Clear
         incrementTextColour();
@@ -218,7 +256,7 @@ GameOver: {
         incrementTextColour();
         lda STATE.level
         centreText("your ranking is", 13);
-        centreText(">> amateur <<", 15);
+        centreText("> rank amateur <", 15);
 
         // shrink the border
         ldx STATE.temp1

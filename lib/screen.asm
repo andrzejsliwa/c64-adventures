@@ -79,6 +79,9 @@ TextCenter: {
         sbc columnOffset
         sta columnOffset
 
+    // and increment it ?
+    inc columnOffset
+
     // set up our initial screen memory base
     resetWord(screenRowBase);
     addWord(SCREEN_BASE, screenRowBase);

@@ -256,3 +256,33 @@ Accumulator
     sta 652
 
 }
+
+.macro appendIntegerToText(original, add) {
+
+    jsr appendText
+    jmp Done
+
+    appendText:
+        ldy #original.size()
+        lda add
+        // from int to petscii
+        adc #48
+        sta destination, y
+
+        lda #<destination
+        sta $fb
+        lda #>destination
+        sta $fc
+        rts
+
+    // values
+    destination: {
+        .text original
+        // this byte gets replaced
+        .byte 0
+        .byte 0
+    }
+
+    Done:
+
+}
