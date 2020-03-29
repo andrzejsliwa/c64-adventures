@@ -69,12 +69,10 @@ NewLevel: {
         jsr SCREEN.Clear
         incrementTextColour();
 
-        centreText(@"gET rEADY pLAYER 1", 11);
-        .var level = 1
-        lda STATE.level
-        sta level
+        centreText("gET rEADY pLAYER 1", 11);
         incrementTextColour();
-        centreText("lEVEL 0" + toIntString(level), 13);
+        lda STATE.level
+        centreText(">> lEVEL 01 <<", 13);
 
         // shrink the border
         ldx STATE.temp1

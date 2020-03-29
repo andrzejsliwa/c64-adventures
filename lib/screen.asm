@@ -31,10 +31,7 @@ SCREEN: {
 
     jmp start
 
-    .if (mod(text.size(), 2) == 1) {
-        .eval text += " ";
-    }
-
+    // add a null terminator
     !: {
         .text text
         .byte 0
@@ -60,14 +57,18 @@ TextCenter: {
         lda (ptr), y
         beq Done
         iny
+        // no point going beyond size of screen
+        cpy #40
+        beq Done
         jmp !-
     Done:
+
     // divide it by 2
     tya
     lsr
     sta columnOffset
     // and take it from mid screen point
-    lda #20
+    lda #21
     sbc columnOffset
     sta columnOffset
 
@@ -265,6 +266,7 @@ FullscreenBorder:
 /*
     simple border scroll, with offset
 */
+/*
 .macro nastyBorder(startX, startY) {
 
     .var endX = 40 - startX
@@ -288,6 +290,7 @@ FullscreenBorder:
         }
     }
 }
+*/
 /*
 .macro printCenter(text, y) {
 
