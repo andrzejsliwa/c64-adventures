@@ -65,12 +65,19 @@ TextCenter: {
 
     // divide it by 2
     tya
+    // shift it right to divide
     lsr
     sta columnOffset
+    // check if it's odd, add one if it is
+    tya
+    and #%00000001
+    beq !+
+    inc columnOffset
     // and take it from mid screen point
-    lda #21
-    sbc columnOffset
-    sta columnOffset
+    !:
+        lda #20
+        sbc columnOffset
+        sta columnOffset
 
     // set up our initial screen memory base
     resetWord(screenRowBase);
@@ -92,17 +99,19 @@ TextCenter: {
     tax
 
     lda table40, x
-    adc columnOffset
     sta rowOffset
     inx
     lda table40, x
     sta rowOffset + 1
     addWordFromAddress(rowOffset, screenRowBase);
+    addByteToWord(columnOffset,screenRowBase);
     addWordFromAddress(rowOffset, colourRowBase);
-    // initial screen memory base is set
+    addByteToWord(columnOffset, colourRowBase);
+    // initial screen memory base is set, aligned to row and column start
 
     ldy #0
     ldx VIC_TEXT_COLOUR
+
     LOOP:
         smcWord(screenRowBase, smc1);
         // load next char, based on y offset

@@ -177,6 +177,16 @@ Accumulator
     adc address + 1
     sta to + 1
 }
+
+.macro addByteToWord(val, to) {
+    clc
+    lda to
+    adc val
+    sta to
+    bcc Done
+        inc to + 1
+    Done:
+}
 /*
 adds word 'val' to memory pair specified by the to address
 Accumulator 
