@@ -13,7 +13,8 @@
     GameStateNewLevel = 3,
     GameStatePlaying = 4,
     GameStateDying = 5,
-    GameStateHighScore = 6
+    GameStateGameOver = 6, 
+    GameStateHighScore = 7
 }
 
 .zp {

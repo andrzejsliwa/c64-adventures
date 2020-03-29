@@ -30,6 +30,7 @@ Intro: {
         stateTransitioned();
 
         setTextColour(LIGHT_GREEN)
+        
         centreText("zERO pAGE pOWER", 9);
         centreText(@"<- ! a c=64 adventure ! ->", 11);
         centreText("intro", 13);
@@ -42,7 +43,8 @@ Intro: {
 
     KEY:
         // goto instructions screen
-        transitionState(GameStateInstructions)
+        //transitionState(GameStateInstructions);
+        transitionState(GameStateHighScore)
 
     NOOP:
         rts

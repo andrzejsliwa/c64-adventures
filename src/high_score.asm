@@ -1,9 +1,64 @@
 #importonce
 
+#import "../lib/labels.asm"
+#import "../lib/input.asm"
 #import "../lib/screen.asm"
+#import "state.asm"
+#import "config.asm"
 
 HighScore: {
-    centreText(@"<- ! a c=64 adventure ! ->", 11);
-    centreText("high scores", 13);
+
+    ldx #00
+    jsr AnimatedBorder
+
+    // check this is first time here
+    lda STATE.entered
+    cmp #StateEntered
+    beq SETUP
+
+    // do nothing for 10 frames
+    inc STATE.divider
+    lda STATE.divider
+    cmp #$0a
+    beq DRAW
     rts
+
+    SETUP:
+
+        // reset state
+        stateTransitioned();
+        setBorderColour(BLACK);
+        setTextColour(WHITE);
+
+    DRAW:
+        // reset the divider flag
+        lda #00
+        sta STATE.divider
+
+        //jsr SCREEN.Clear
+        incrementTextColour();
+        centreText("<- ! a c=64 adventure ! ->", 5);
+        incrementTextColour();
+        centreText("tOP 10 hIGH sCORES", 8);
+        .for (var x = 0; x < 10; x++) {
+            .var intScore = (10 - x) * 100;
+            .var textScore = toIntString(intScore, 4);
+            incrementTextColour();
+            centreText("player "  + toIntString([x + 1], 2) + " ..... " + textScore, [11 + x]);
+        }
+
+rts
+
+    INSTRUCTION_INPUT:
+
+        checkKey(KeySpace, true);
+        beq NOOP
+
+    TRANSITION:
+        // go back to intro screen
+        transitionState(GameStateIntro);
+
+    NOOP:
+        rts
+
 }

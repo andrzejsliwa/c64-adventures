@@ -43,7 +43,7 @@ NewLevel: {
         // check if we're finished animating
         lda STATE.temp1
         cmp #$0d
-        beq START_GAME
+        beq TRANSITION
         cmp #$0b
         bmi LEVEL_DRAW
         jsr SCREEN.Clear
@@ -58,7 +58,7 @@ NewLevel: {
         inc STATE.level
         jmp LEVEL_DRAW
 
-    START_GAME:
+    TRANSITION:
 
         transitionState(GameStatePlaying);
         //transitionState(GameStateIntro);
@@ -110,6 +110,7 @@ Game: {
         setTextColour(WHITE);
         centreText(@"<- ! a c=64 adventure ! ->", 11);
         centreText("playing game", 13);
+        centreText("lives remaining : 0x", 15);
 
     INSTRUCTION_INPUT:
 
@@ -117,15 +118,111 @@ Game: {
         beq NOOP
 
     KEY:
-        // go back to intro screen
-        transitionState(GameStateIntro);
+        transitionState(GameStateDying);
 
     NOOP:
         rts
 }
 
 Dying: {
-    centreText(@"<- ! a c=64 adventure ! ->", 11);
-    centreText("dying", 13);
+
+    lda STATE.entered
+    cmp #StateEntered
+    beq INSTRUCTION_DRAW
+    jmp INSTRUCTION_INPUT
+
+    INSTRUCTION_DRAW:
+
+        // reset state
+        stateTransitioned();
+        jsr SCREEN.Clear
+        ldx #0
+        jsr AnimatedBorder
+        setBorderColour(BLACK);
+        setTextColour(WHITE);
+        centreText(@"<- ! a c=64 adventure ! ->", 11);
+        centreText("damn, we're dying :(", 13);
+        centreText("lives remaining : 0x", 15);
+
+    INSTRUCTION_INPUT:
+
+        checkKey(KeySpace, true);
+        beq NOOP
+
+    KEY:
+    
+        dec STATE.lives
+        beq GameOver
+        transitionState(GameStateNewLevel);
+        jmp NOOP
+
+    GameOver:
+        transitionState(GameStateGameOver);
+    NOOP:
+        rts
+}
+
+GameOver: {
+
+    ldx STATE.temp1
+    jsr AnimatedBorder
+
+    // check this is first time here
+    lda STATE.entered
+    cmp #StateEntered
+    beq LEVEL_SETUP
+
+    // do nothing for 16 frames
+    inc STATE.divider
+    lda STATE.divider
+    cmp #$0f
+    beq FRAME
     rts
+
+    // every 10 frames we hit here
+    FRAME:
+        // reset divider
+        lda #$00
+        sta STATE.divider
+        // increment offset
+        inc STATE.temp1
+        // check if we're finished animating
+        lda STATE.temp1
+        cmp #$0d
+        beq TRANSITION
+        cmp #$0b
+        bmi LEVEL_DRAW
+        jsr SCREEN.Clear
+        incrementTextColour();
+        centreText(" ...............", 12);
+        rts
+
+    LEVEL_SETUP:
+        // reset state
+        stateTransitioned();
+        // increment our level counter
+        inc STATE.level
+        jmp LEVEL_DRAW
+
+    TRANSITION:
+
+        transitionState(GameStateHighScore);
+        rts
+
+    LEVEL_DRAW:
+
+        jsr SCREEN.Clear
+        incrementTextColour();
+
+        centreText("gAME oVER pLAYER 1", 11);
+        incrementTextColour();
+        lda STATE.level
+        centreText("your ranking is", 13);
+        centreText(">> amateur <<", 15);
+
+        // shrink the border
+        ldx STATE.temp1
+        jsr AnimatedBorder
+        rts
+
 }

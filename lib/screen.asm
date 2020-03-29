@@ -373,8 +373,24 @@ FullscreenBorder:
     ldx #colour;
     stx VIC_TEXT_COLOUR;
 }
+
+IncTextColour: {
+    lda VIC_TEXT_COLOUR
+    sec
+    sbc #01
+    // it's wrapped or it's zero, reset
+    bcc Rotate
+    beq Rotate
+    jmp Done
+    Rotate:
+        lda #$0f
+    Done:
+        // put it back in the register
+        sta VIC_TEXT_COLOUR
+    rts
+}
 .macro incrementTextColour() {
-    inc VIC_TEXT_COLOUR
+    jsr IncTextColour
 }
 
 #if HAS_KERNAL_ROM

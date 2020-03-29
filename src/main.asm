@@ -30,6 +30,8 @@ SidHandler: {
     beq GamePlayingJmp
     cmp #GameStateDying
     beq GameDyingJmp
+    cmp #GameStateGameOver
+    beq GameOverJmp
     cmp #GameStateHighScore
     beq HighScoreJmp
 
@@ -49,6 +51,8 @@ SidHandler: {
         jmp Game
     GameDyingJmp:
         jmp Dying
+    GameOverJmp:
+        jmp GameOver
     HighScoreJmp:
         jmp HighScore
 }
