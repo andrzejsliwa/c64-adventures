@@ -1,8 +1,13 @@
 #importonce
 
+
 #import "../lib/screen.asm"
 #import "../lib/input.asm"
+#import "../lib/score.asm"
 #import "state.asm"
+
+#import "../lib/score.asm"
+scoreSetup(STATE.score, $0400 + 60);
 
 /* sets us up for a new game */
 GameInit: {
@@ -13,6 +18,7 @@ GameInit: {
     lda #03
     sta STATE.lives
     transitionState(GameStateNewLevel);
+    jsr resetScore
 }
 
 /* sets us up for a new level */
@@ -96,7 +102,10 @@ Game: {
 
     ldx #0
     jsr AnimatedBorder
-    //inc VIC_BORDER_COLOUR
+
+    // score goes up every frame for testing
+    ldx #01
+    jsr addToScore
 
     lda STATE.entered
     cmp #StateEntered
@@ -110,6 +119,8 @@ Game: {
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
+        printAbs("sCORE:", 14, 1);
+
         centreText(@"<- ! a c=64 adventure ! ->", 11);
         centreText("playing game", 13);
         //centreText("lives remaining : 0x", 15);

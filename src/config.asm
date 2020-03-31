@@ -14,7 +14,7 @@ Compile level config flags for libs
 #import "../lib/screen.asm"
 #import "../lib/charset.asm"
 
-.pc = * "Config"
+* = * "Config"
 
 .const RASTER_LINE = $00
 

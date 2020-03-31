@@ -4,3 +4,5 @@ assets/charsets/**
 *.vs
 *.dbg
 *.byte
+lib/maths.asm
+
