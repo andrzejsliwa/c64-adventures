@@ -3,6 +3,8 @@
 #import "labels.asm"
 #import "functions.asm"
 
+* = * "VIC"
+
 /*
 Power up settings are
 initialiseVicCharacterMode(VIC_BANK_0, VIC_SCREEN_OFFSET_1, VIC_CHARSET_OFFSET_2);

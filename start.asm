@@ -1,11 +1,11 @@
 // entry point for compiling etc
 #importonce
 
+#import "lib/labels.asm"
+#import "lib/functions.asm"
+
 #import "src/config.asm"
 #import "src/music.asm"
-
-#import "lib/functions.asm"
-#import "lib/labels.asm"
 #import "lib/screen.asm"
 #import "lib/irq.asm"
 #import "lib/charset.asm"
@@ -18,7 +18,7 @@ loadCharsetWithHeader("assets/charset_cpu.64c", $3800, 2);
 BasicUpstart2(Entry)
 
 // set the program counter to just after game music
-* = $1754 "Game"
+* = $1754 "Entry"
 Entry: {
 
     .var hasKernalRom = false;
@@ -53,7 +53,7 @@ Entry: {
     transitionState(GameStateIntro);
 
     // register the interrupt handler
-    initIRQ(SidHandler, RASTER_LINE)
+    initIRQ(Main, RASTER_LINE)
 
     // and kick off infinite main loop
     jmp *

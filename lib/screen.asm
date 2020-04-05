@@ -9,7 +9,7 @@
     https://sta.c64.org/cbm64col.html
 */
 
-* = $2200 "Screen Code"
+* = $2100 "Screen"
 
 // lookup for calculating screen row offset
 table40:.fillword 24, i * 40
@@ -208,8 +208,10 @@ AnimatedBorder: {
             // paint the first char by incrementing the address
             smcWord(screenRowBase, smc1);
             smcWord(colourRowBase, smc2);
+        // character
         smc1:
             inc $dead, x
+        // colour
         smc2:
             inc $beef, x
 

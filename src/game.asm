@@ -10,18 +10,21 @@
 scoreSetup(STATE.score, $0400 + 60);
 
 /* sets us up for a new game */
+* = $2500 "GameInit"
 GameInit: {
+    .break
     stateTransitioned();
     lda #00
     sta STATE.level
-    sta STATE.score
     lda #03
     sta STATE.lives
-    transitionState(GameStateNewLevel);
+    // reset the score
     jsr resetScore
+    transitionState(GameStateNewLevel);
 }
 
 /* sets us up for a new level */
+* = * "NewLevel"
 NewLevel: {
 
     ldx STATE.temp1
@@ -87,6 +90,7 @@ NewLevel: {
 }
 
 /* the main game logic will go here */
+* = * "Game"
 Game: {
 
 /*
@@ -121,12 +125,12 @@ Game: {
         setTextColour(WHITE);
         printAbs("sCORE:", 14, 1);
 
-        centreText(@"<- ! a c=64 adventure ! ->", 11);
-        centreText("playing game", 13);
-        //centreText("lives remaining : 0x", 15);
+        centreText(@"<- ! a c=64 adventure ! ->", 10);
+        centreText("playing game", 12);
+        //centreText("lives remaining : 0x", 14);
 
         appendIntegerToText("lives remaining : ", STATE.lives);
-        ldx #15
+        ldx #14
         jsr TextCenter
 
     INPUT:
@@ -142,6 +146,7 @@ Game: {
 
 }
 
+* = * "Dying"
 Dying: {
 
     ldx STATE.temp1
@@ -211,6 +216,7 @@ Dying: {
         rts
 }
 
+* = * "GameOver"
 GameOver: {
 
     ldx STATE.temp1
@@ -263,11 +269,12 @@ GameOver: {
         jsr SCREEN.Clear
         incrementTextColour();
 
-        centreText("gAME oVER pLAYER 1", 11);
+        centreText("gAME oVER pLAYER 1", 10);
         incrementTextColour();
         lda STATE.level
-        centreText("your ranking is", 13);
-        centreText("> rank amateur <", 15);
+        centreText("your ranking is", 12);
+        incrementTextColour();
+        centreText("> rank amateur <", 14);
 
         // shrink the border
         ldx STATE.temp1

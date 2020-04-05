@@ -30,11 +30,9 @@ Intro: {
         stateTransitioned();
 
         setTextColour(LIGHT_GREEN)
-        
-        centreText("zERO pAGE pOWER", 9);
-        centreText(@"<- ! a c=64 adventure ! ->", 11);
-        centreText("intro", 13);
-        centreText("welcome to a game", 15);
+        centreText(@"<- ! a c=64 adventure ! ->", 10);
+        centreText("introduction", 12);
+        centreText("welcome to a game", 14);
 
     INTRO_INPUT:
 
@@ -67,9 +65,9 @@ Instructions: {
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
-        centreText(@"<- ! a c=64 adventure ! ->", 11)
-        centreText("instructions", 13);
-        centreText("! just play it !", 15);
+        centreText(@"<- ! a c=64 adventure ! ->", 10)
+        centreText("instructions", 12);
+        centreText("! just play it !", 14);
 
     INSTRUCTION_INPUT:
 

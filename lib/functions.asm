@@ -2,6 +2,7 @@
 
 #import "labels.asm"
 
+* = * "Functions"
 /*
 self modifying code for a word value
 takes the label Val and applies it to the desination label next command.

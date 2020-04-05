@@ -11,7 +11,9 @@
 #import "game.asm"
 #import "high_score.asm"
 
-SidHandler: {
+* = * "Main"
+
+Main: {
 
     #if HAS_MUSIC
         jsr currentSid.play

@@ -5,9 +5,23 @@
 .macro scoreSetup(scoreRegister, displayAddress) {
 
 @resetScore:
+
+    lda #$ff
+    sta cache
+    sta cache + 1
+    sta value
+
     lda #00
     sta scoreRegister
     sta scoreRegister + 1
+
+    // reset the result bytes
+    ldx #05
+    !:
+        sta result, x
+        dex
+        bmi !-
+
     rts
 
 printScore:
@@ -15,7 +29,6 @@ printScore:
     ldy #00
 l1:
     lda result, x
-
 /*
     // skip leading zeroes...
     bne l2
@@ -51,7 +64,6 @@ l2:
     lda scoreRegister + 1
     sta cache + 1
 
-.break
     // reset x
     ldx #01
 l3:
