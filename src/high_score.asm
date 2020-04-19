@@ -5,6 +5,7 @@
 #import "../lib/screen.asm"
 #import "state.asm"
 #import "config.asm"
+#import "music.asm"
 
 HighScore: {
 
@@ -41,6 +42,13 @@ HighScore: {
         stateTransitioned();
         setBorderColour(BLACK);
         setTextColour(WHITE);
+        #if HAS_MUSIC
+            // fix the sid up
+            ldx #0
+            ldy #0
+            lda #MUSIC_HI_SCORE
+            jsr music.init
+        #endif
 
     DRAW:
         // reset the divider flag

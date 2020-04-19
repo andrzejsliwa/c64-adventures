@@ -5,11 +5,7 @@
 #import "../lib/screen.asm"
 #import "state.asm"
 #import "config.asm"
-
-mytext: 
-    .text "zERO pAGE pOWER ! "
-    .byte 'h', 'e', 'l', 'l', 'o', ' ', 'z', 'p', 0
-
+#import "music.asm"
 
 Intro: {
 
@@ -29,6 +25,14 @@ Intro: {
         // reset state
         stateTransitioned();
 
+        // set up the music, IRQ's and or game specific stuff
+        #if HAS_MUSIC
+            ldx #0
+            ldy #0
+            lda #MUSIC_INTRO
+            jsr music.init
+        #endif
+
         setTextColour(LIGHT_GREEN)
         centreText(@"<- ! a c=64 adventure ! ->", 10);
         centreText("introduction", 12);
@@ -42,7 +46,6 @@ Intro: {
     KEY:
         // goto instructions screen
         transitionState(GameStateInstructions);
-        //transitionState(GameStateHighScore)
 
     NOOP:
         rts

@@ -9,6 +9,10 @@
 #import "state.asm"
 #import "intro.asm"
 #import "game.asm"
+#import "game_init.asm"
+#import "game_new_level.asm"
+#import "game_dying.asm"
+#import "game_over.asm"
 #import "high_score.asm"
 
 * = * "Main"
@@ -16,7 +20,7 @@
 Main: {
 
     #if HAS_MUSIC
-        jsr currentSid.play
+        jsr music.play
     #endif
 
     lda STATE.gameState

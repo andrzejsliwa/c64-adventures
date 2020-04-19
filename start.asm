@@ -18,7 +18,7 @@ loadCharsetWithHeader("assets/charset_cpu.64c", $3800, 2);
 BasicUpstart2(Entry)
 
 // set the program counter to just after game music
-* = $1754 "Entry"
+* = $1a82 "Entry"
 Entry: {
 
     .var hasKernalRom = false;
@@ -37,21 +37,13 @@ Entry: {
     setVicColourMode(false);
     initialiseVicCharacterMode(VIC_BANK_0, VIC_SCREEN_OFFSET_1, VIC_CHARSET_OFFSET_7);
 
-    // set up the music, IRQ's and or game specific stuff
-    #if HAS_MUSIC
-        ldx #0
-        ldy #0
-        lda #currentSid.startSong - 1
-        jsr currentSid.init
-    #endif
-
     setBackgroundColour(BLACK);
     setBorderColour(LIGHT_GREEN);
     setTextColour(LIGHT_GRAY);
 
     // set the initial game state up
     transitionState(GameStateIntro);
-
+    
     // register the interrupt handler
     initIRQ(Main, RASTER_LINE)
 

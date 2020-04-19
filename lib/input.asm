@@ -211,7 +211,6 @@ ReadJoystick2: {
                 // x is the final result of our tests
                 ldx #0
 
-
                 // load the register
                 ldy $dc01
                 // compare acc w/ $ff, aka nothing pressed
