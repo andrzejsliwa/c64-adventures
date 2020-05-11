@@ -23,6 +23,9 @@
         gameState: .byte $00;
         // flags if we have entered a new state
         entered: .byte $00;
+        // last state we were in, for music etc
+        lastState: .byte $00;
+
         // frequency divider
         divider: .byte $00;
 
@@ -77,7 +80,9 @@
 /*
     simple wrapper around marking that we're not new in a state
 */
-.macro stateTransitioned() {
+.macro stateTransitioned(currentState) {
     lda #StateExisting
     sta STATE.entered
+    lda #currentState
+    sta STATE.lastState
 }

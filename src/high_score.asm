@@ -38,8 +38,6 @@ HighScore: {
 
     SETUP:
 
-        // reset state
-        stateTransitioned();
         setBorderColour(BLACK);
         setTextColour(WHITE);
         #if HAS_MUSIC
@@ -49,6 +47,8 @@ HighScore: {
             lda #MUSIC_HI_SCORE
             jsr music.init
         #endif
+        // reset state
+        stateTransitioned(GameStateHighScore);
 
     DRAW:
         // reset the divider flag

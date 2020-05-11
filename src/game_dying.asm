@@ -41,10 +41,19 @@ Dying: {
         rts
 
     LEVEL_SETUP:
-        // reset state
-        stateTransitioned();
+
         // increment our level counter
         inc STATE.level
+        // set up the in game music
+        #if HAS_MUSIC
+            ldx #0
+            ldy #0
+            lda #MUSIC_DYING
+            jsr music.init
+        #endif
+        // reset state
+        stateTransitioned(GameStateDying);
+
         jmp LEVEL_DRAW
 
     KEY:

@@ -18,7 +18,7 @@ loadCharsetWithHeader("assets/charset_cpu.64c", $3800, 2);
 BasicUpstart2(Entry)
 
 // set the program counter to just after game music
-* = $1a82 "Entry"
+* = $1bae "Entry"
 Entry: {
 
     .var hasKernalRom = false;

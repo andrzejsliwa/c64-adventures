@@ -23,8 +23,13 @@ Game: {
 
     DRAW:
 
-        // reset state
-        stateTransitioned();
+        // set up the in game music
+        #if HAS_MUSIC
+            ldx #0
+            ldy #0
+            lda #MUSIC_IN_GAME
+            jsr music.init
+        #endif
 
         setBorderColour(BLACK);
         setTextColour(WHITE);
@@ -37,6 +42,9 @@ Game: {
         appendIntegerToText("lives remaining : ", STATE.lives);
         ldx #14
         jsr TextCenter
+
+        // reset state
+        stateTransitioned(GameStatePlaying);
 
     INPUT:
 

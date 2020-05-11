@@ -41,10 +41,22 @@ NewLevel: {
         rts
 
     LEVEL_SETUP:
-        // reset state
-        stateTransitioned();
+
         // increment our level counter
         inc STATE.level
+        // set up the in game music
+        #if HAS_MUSIC
+            lda STATE.lastState
+            cmp #GameStateDying
+            //beq !+
+            ldx #0
+            ldy #0
+            lda #MUSIC_INTERSTITIAL
+            jsr music.init
+            !:
+        #endif
+        // reset state
+        stateTransitioned(GameStateNewLevel);
         jmp LEVEL_DRAW
 
     TRANSITION:

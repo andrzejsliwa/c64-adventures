@@ -8,7 +8,6 @@ scoreSetup(STATE.score, $0400 + 60);
 /* sets us up for a new game */
 * = $2500 "GameInit"
 GameInit: {
-    stateTransitioned();
     lda #00
     sta STATE.level
     lda #03
@@ -22,5 +21,6 @@ GameInit: {
         lda #MUSIC_IN_GAME
         jsr music.init
     #endif
+    stateTransitioned(GameStateNewGame);
     transitionState(GameStateNewLevel);
 }

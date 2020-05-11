@@ -14,6 +14,8 @@
     .const MUSIC_GAME_OVER = music.startSong + 3
     .const MUSIC_HI_SCORE = music.startSong + 1
     .const MUSIC_NONE = music.startSong + 2
+    .const MUSIC_INTERSTITIAL = music.startSong + 4
+    .const MUSIC_DYING = music.startSong + 5
 
     #if DEBUG_VERBOSE
 

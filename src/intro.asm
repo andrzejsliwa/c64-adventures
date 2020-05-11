@@ -22,9 +22,6 @@ Intro: {
 
     INTRO_DRAW:
 
-        // reset state
-        stateTransitioned();
-
         // set up the music, IRQ's and or game specific stuff
         #if HAS_MUSIC
             ldx #0
@@ -37,6 +34,8 @@ Intro: {
         centreText(@"<- ! a c=64 adventure ! ->", 10);
         centreText("introduction", 12);
         centreText("welcome to a game", 14);
+        // reset state
+        stateTransitioned(GameStateIntro);
 
     INTRO_INPUT:
 
@@ -63,14 +62,14 @@ Instructions: {
 
     INSTRUCTION_DRAW:
 
-        // reset state
-        stateTransitioned();
-
         setBorderColour(BLACK);
         setTextColour(WHITE);
         centreText(@"<- ! a c=64 adventure ! ->", 10)
         centreText("instructions", 12);
         centreText("! just play it !", 14);
+        
+        // reset state
+        stateTransitioned(GameStateInstructions);
 
     INSTRUCTION_INPUT:
 
